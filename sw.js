@@ -1,5 +1,5 @@
 /* 让 iPhone 加到主屏幕之后可以离线打开。 */
-const CACHE = 'ai-trainer-v2';
+const CACHE = 'ai-trainer-v3';
 const PRECACHE = [
   './',
   './index.html',

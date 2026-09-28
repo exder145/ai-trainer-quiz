@@ -30,6 +30,8 @@ function currentQuestion(app) {
 function answerWrong(app) {
   const question = currentQuestion(app);
   assert.ok(question, '当前题目应在题库中');
+  const exam = app.document.querySelector('#practiceModeLabel').textContent === '随机测验';
+  const before = app.document.querySelector('#questionCounter').textContent;
   const wrongKey = question.type === 'judgment'
     ? (question.answer === '√' ? '×' : '√')
     : question.options.find((option) => option.key !== question.answer)?.key || question.options[0].key;
@@ -39,7 +41,14 @@ function answerWrong(app) {
   if (question.type === 'multiple' || app.document.querySelector('#submitAnswer').hidden === false) {
     const submit = app.document.querySelector('#submitAnswer');
     assert.equal(submit.disabled, false, `${question.type} 选中后应能用鼠标提交`);
+    if (exam) assert.equal(submit.textContent, '确定');
     submit.click();
+  }
+  if (exam) {
+    const advanced = app.document.querySelector('#questionCounter').textContent !== before;
+    const finished = !app.document.querySelector('#resultView').hidden;
+    assert.ok(advanced || finished, '随机测验点一次确定就应进入下一题或结果页');
+    return { question, wrongKey };
   }
   const next = app.document.querySelector('#nextQuestion');
   assert.equal(next.hidden, false, '提交后应能进入下一题');

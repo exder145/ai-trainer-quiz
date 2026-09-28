@@ -143,7 +143,7 @@
   }
 
   function hintFor(question) {
-    if (session.exam) return '随机测验 · 选择后点「提交答案」，交卷后统一揭晓对错';
+    if (session.exam) return '随机测验 · 选择后点「确定」进入下一题，交卷后统一揭晓对错';
     if (question.type === 'multiple') return '多选题 · 选好全部正确选项后点「提交答案」，答对自动进入下一题';
     if (question.type === 'single') return '单选题 · 点选答案后立刻判定，答对自动进入下一题';
     return '判断题 · 点选答案后立刻判定，答对自动进入下一题';
@@ -212,6 +212,7 @@
     $('#prevQuestion').hidden = session.index === 0;
     $('#submitAnswer').hidden = submitted || !needsSubmit(currentQuestion());
     $('#submitAnswer').disabled = selection.size === 0;
+    $('#submitAnswer').textContent = session.exam ? '确定' : '提交答案';
     $('#nextQuestion').hidden = !submitted;
     $('#nextQuestion').textContent = last ? '查看本轮结果 →' : '下一题 →';
     $('#prevQuestion').textContent = '← 上一题';
@@ -297,7 +298,11 @@
     renderFeedbackArea(session.answers[session.index]);
     paintProgress();
     scheduleSync();
-    if (correct && !session.exam) {
+    if (session.exam) {
+      goNext();
+      return;
+    }
+    if (correct) {
       advanceTimer = setTimeout(() => {
         advanceTimer = null;
         goNext();
