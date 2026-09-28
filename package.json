@@ -1,0 +1,10 @@
+{
+  "name": "ai-trainer-quiz",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/quiz.test.js tests/sync.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^22.1.0"
+  }
+}

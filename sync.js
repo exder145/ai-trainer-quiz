@@ -124,6 +124,7 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ items }),
     }, fetchImpl);
+    if (payload && payload.warning) throw new Error(payload.warning);
     return { items: pickItems(payload), updatedAt: payload.updatedAt || null };
   }
 

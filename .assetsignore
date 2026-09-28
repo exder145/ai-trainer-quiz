@@ -3,9 +3,12 @@ worker
 wrangler.toml
 wrangler.jsonc
 dev-server.js
-node_modules
+**/node_modules
+**/tests
+package.json
+package-lock.json
 .wrangler
 .sync-data.json
-.git
+**/.git
 .gitignore
 *.md

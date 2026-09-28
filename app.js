@@ -230,6 +230,11 @@
     return question.answer.split('').join('、');
   }
 
+  function selectedText(question, selected) {
+    if (question.type === 'judgment') return selected === '√' ? '正确（√）' : '错误（×）';
+    return selected.split('').join('、');
+  }
+
   function renderFeedbackArea(record) {
     const box = $('#feedback');
     box.replaceChildren();
@@ -269,11 +274,12 @@
       if (selection.has(key)) selection.delete(key);
       else selection.add(key);
       paintChoices();
-      $('#submitAnswer').disabled = selection.size === 0;
+      paintActions();
       return;
     }
     selection = new Set([key]);
     paintChoices();
+    paintActions();
     if (!needsSubmit(question)) commitAnswer();
   }
 
@@ -284,7 +290,7 @@
     const correct = core.isCorrect(question, selected);
     state = core.recordAnswer(state, question.id, correct);
     saveState();
-    session.answers[session.index] = { selected, correct };
+    session.answers[session.index] = { id: question.id, selected, correct };
     submitted = true;
     paintChoices();
     paintActions();
@@ -335,7 +341,7 @@
     list.replaceChildren();
     if (wrong.length) {
       const title = document.createElement('h2');
-      title.textContent = '本轮错题';
+      title.textContent = '本轮全部错题（' + wrong.length + ' 题）';
       list.append(title);
       for (const row of wrong) {
         const question = byId.get(row.id);
@@ -345,9 +351,11 @@
         number.textContent = typeNames[question.type] + ' ' + question.number;
         const stem = document.createElement('span');
         stem.textContent = question.stem;
+        const selected = document.createElement('p');
+        selected.textContent = '你的答案：' + selectedText(question, row.selected);
         const answer = document.createElement('p');
         answer.textContent = '正确答案：' + answerText(question) + ' · ' + (question.explanation === '略' ? '原题库未提供详细解析。' : question.explanation);
-        item.append(number, stem, answer);
+        item.append(number, stem, selected, answer);
         list.append(item);
       }
     }

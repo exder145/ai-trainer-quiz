@@ -58,7 +58,7 @@
     let bookmarked;
     if (leftMark === rightMark) bookmarked = left.bookmarked || right.bookmarked;
     else bookmarked = (rightMark > leftMark ? right : left).bookmarked;
-    return { ...base, bookmarked };
+    return { ...base, bookmarked, markAt: leftMark >= rightMark ? left.markAt : right.markAt };
   }
 
   function mergeItems(left, right) {

@@ -84,7 +84,7 @@ function mergeItem(left, right) {
   if (leftMark === rightMark) bookmarked = left.bookmarked || right.bookmarked;
   else bookmarked = (rightMark > leftMark ? right : left).bookmarked;
 
-  return { ...base, bookmarked };
+  return { ...base, bookmarked, markAt: leftMark >= rightMark ? left.markAt : right.markAt };
 }
 
 function mergeItems(left, right) {
@@ -96,20 +96,16 @@ function mergeItems(left, right) {
 }
 
 async function readStored(env, key) {
-  try {
-    const raw = await env.STUDY_KV.get(key);
-    if (!raw) return { items: {}, updatedAt: null };
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed.items !== 'object' || Array.isArray(parsed.items)) {
-      return { items: {}, updatedAt: null };
-    }
-    return {
-      items: parsed.items,
-      updatedAt: typeof parsed.updatedAt === 'string' ? parsed.updatedAt : null,
-    };
-  } catch {
-    return { items: {}, updatedAt: null };
+  const raw = await env.STUDY_KV.get(key);
+  if (!raw) return { items: {}, updatedAt: null };
+  const parsed = JSON.parse(raw);
+  if (!parsed || !parsed.items || typeof parsed.items !== 'object' || Array.isArray(parsed.items)) {
+    throw new Error('Stored progress has an invalid format');
   }
+  return {
+    items: parsed.items,
+    updatedAt: typeof parsed.updatedAt === 'string' ? parsed.updatedAt : null,
+  };
 }
 
 async function handleState(request, env, url) {
@@ -122,7 +118,12 @@ async function handleState(request, env, url) {
   }
 
   const key = 'state:' + code;
-  const stored = await readStored(env, key);
+  let stored;
+  try {
+    stored = await readStored(env, key);
+  } catch {
+    return json({ error: '云端读取失败，请稍后重试；现有记录未修改。' }, 503);
+  }
 
   if (request.method === 'GET') {
     return json({ items: stored.items, updatedAt: stored.updatedAt });
