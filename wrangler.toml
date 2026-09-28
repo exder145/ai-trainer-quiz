@@ -1,0 +1,15 @@
+name = "ai-trainer-quiz"
+main = "worker/index.js"
+compatibility_date = "2026-09-28"
+
+# 把仓库当静态网站发出去，变量名 ASSETS 对应 worker/index.js 里的 env.ASSETS
+[assets]
+directory = "."
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+# 先执行下面这条命令拿到 id，再把它填到下面
+#   npx wrangler kv namespace create STUDY_KV
+[[kv_namespaces]]
+binding = "STUDY_KV"
+id = "7585bb4ab5ee45fe9cf905752af94518"

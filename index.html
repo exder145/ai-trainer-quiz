@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101c31">
+  <meta name="description" content="人工智能训练师理论题刷题工具，支持新题、错题、随机练习、多设备同步和进度备份。">
+  <title>人工智能训练师 · 理论题刷题工具</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="刷题">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">训</div>
+        <div><strong>训练师题库</strong><span>理论题 · 900 题</span></div>
+      </div>
+      <div class="side-label">学习空间</div>
+      <nav class="side-nav" aria-label="页面">
+        <button type="button" class="nav-link active" data-nav="dashboard"><span class="nav-icon" aria-hidden="true">◫</span>学习总览</button>
+        <button type="button" class="nav-link" data-nav="bank"><span class="nav-icon" aria-hidden="true">▤</span>全部题目</button>
+        <button type="button" class="nav-link" data-nav="sync"><span class="nav-icon" aria-hidden="true">⇄</span>多设备同步</button>
+        <button type="button" class="nav-link" data-nav="backup"><span class="nav-icon" aria-hidden="true">⇩</span>数据备份</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-note"><span class="note-light"></span><span>离线可用<br><small>记录保存在这台设备</small></span></div>
+        <div class="sidebar-footer">按原题库答案判分</div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar"><span class="topbar-label">备考工作台</span><span class="topbar-right" id="todayLabel"></span></div>
+
+      <section id="dashboardView" class="view" aria-labelledby="pageTitle">
+        <div class="page-heading">
+          <div><div class="eyebrow">YOUR STUDY DESK <span></span> 理论题练习</div><h1 id="pageTitle">人工智能训练师</h1><p>从新题开始，做错的题再练到熟悉。每一次作答都会留下进度。</p></div>
+          <div class="question-total"><b data-stat="total">900</b><span>道原题</span></div>
+        </div>
+
+        <div class="overview-grid">
+          <section class="progress-panel" aria-label="学习进度">
+            <div class="panel-head"><span>整体进度</span><span id="progressFraction">0 / 900 已练习</span></div>
+            <div class="progress-content"><div class="progress-ring" id="progressRing"><div><strong id="progressPercent">0%</strong><small>完成度</small></div></div><div class="progress-copy"><strong id="progressHeadline">从第一题开始</strong><p id="progressText">先做一轮新题，错题会自动进入复习列表。</p><div class="progress-legend"><span><i class="dot cyan"></i>已练习</span><span><i class="dot blue"></i>待练习</span></div></div></div>
+          </section>
+          <section class="stats-grid" aria-label="题目统计">
+            <div class="stat-card"><span>还没做过</span><strong data-stat="new">900</strong><small>新题</small></div>
+            <div class="stat-card"><span>做错过</span><strong data-stat="wrong">0</strong><small>错题会一直保留</small></div>
+            <div class="stat-card"><span>待巩固</span><strong data-stat="activeWrong">0</strong><small>连续答对两次即巩固</small></div>
+            <div class="stat-card"><span>累计正确率</span><strong data-stat="accuracy">0%</strong><small>按每次作答计算</small></div>
+          </section>
+        </div>
+
+        <div class="section-heading"><div><h2>开始练习</h2><p>选择一个适合现在状态的练法</p></div></div>
+        <div class="mode-grid">
+          <article class="mode-card mode-primary"><div class="mode-symbol" aria-hidden="true">01</div><div class="mode-text"><span class="mode-tag">循序渐进</span><h3>先攻克新题</h3><p>每次 20 题，按题库顺序推进，不漏掉任何一题。</p></div><button type="button" id="startNew" class="btn btn-light">开始学新题 <span aria-hidden="true">↗</span></button></article>
+          <article class="mode-card"><div class="mode-symbol" aria-hidden="true">↺</div><div class="mode-text"><span class="mode-tag">反复记住</span><h3>重练错题</h3><p>做错过的题会一直在这里，直到你真正记牢。</p></div><button type="button" id="startWrong" class="btn btn-outline">错题复习 <span aria-hidden="true">↗</span></button></article>
+          <article class="mode-card"><div class="mode-symbol" aria-hidden="true">✦</div><div class="mode-text"><span class="mode-tag">考前自测</span><h3>随机测验</h3><p>随机抽取 30 题，交卷后查看成绩和解析。</p></div><button type="button" id="startExam" class="btn btn-outline">开始测验 <span aria-hidden="true">↗</span></button></article>
+        </div>
+
+        <div class="section-heading coverage-heading"><div><h2>题型进度</h2><p>三类题各 300 道</p></div><button type="button" class="text-link" data-nav="bank">查看题库 <span aria-hidden="true">→</span></button></div>
+        <div class="type-grid" id="typeProgress"></div>
+      </section>
+
+      <section id="practiceView" class="view" hidden aria-labelledby="practiceTitle">
+        <div class="practice-top"><button type="button" class="back-button" id="quitPractice">← <span>退出练习</span></button><span id="practiceModeLabel"></span></div>
+        <div class="practice-shell">
+          <div class="practice-meter"><div><span id="questionCounter">第 1 / 20 题</span><span id="practiceScore"></span></div><div class="meter-track"><div id="meterFill"></div></div></div>
+          <div class="question-meta"><span class="type-pill" id="questionType"></span><span id="sourceNumber"></span><button type="button" class="bookmark-btn" id="bookmarkQuestion" aria-label="收藏此题" title="收藏此题">☆</button></div>
+          <h1 id="practiceTitle" class="question-stem"></h1>
+          <p class="choice-hint" id="choiceHint"></p>
+          <div class="choices" id="choices" role="group" aria-label="选项"></div>
+          <div id="feedback" class="feedback" hidden></div>
+          <div class="practice-actions" id="practiceActions"><button type="button" class="btn btn-outline-dark" id="prevQuestion" hidden>← 上一题</button><button type="button" class="btn btn-dark" id="submitAnswer" disabled>提交答案</button><button type="button" class="btn btn-dark" id="nextQuestion" hidden>下一题 <span aria-hidden="true">→</span></button><span class="keyboard-tip" id="keyboardTip">数字键选择 · Enter 提交 / 下一题 · ← 上一题</span></div>
+        </div>
+      </section>
+
+      <section id="resultView" class="view" hidden aria-labelledby="resultTitle">
+        <div class="result-panel"><div class="result-badge">本轮结束</div><h1 id="resultTitle">这一轮练完了</h1><p id="resultSubtitle"></p><div class="result-score"><strong id="resultRate"></strong><span id="resultCount"></span></div><div class="result-actions"><button type="button" class="btn btn-dark" id="resultHome">返回总览</button><button type="button" class="btn btn-outline-dark" id="resultWrong" hidden>复盘本轮错题</button></div></div>
+        <div class="result-list" id="resultList"></div>
+      </section>
+
+      <section id="bankView" class="view" hidden aria-labelledby="bankTitle">
+        <div class="simple-heading"><div><div class="eyebrow">QUESTION BANK</div><h1 id="bankTitle">全部题目</h1><p>按题型或学习状态筛选，也可以直接搜索题干。</p></div><span id="bankResultCount"></span></div>
+        <div class="bank-controls"><label class="search-box"><span aria-hidden="true">⌕</span><input type="search" id="bankSearch" placeholder="搜索题目关键词" autocomplete="off" aria-label="搜索题目关键词"></label><select id="bankType" aria-label="选择题型"><option value="all">全部题型</option><option value="judgment">判断题</option><option value="single">单选题</option><option value="multiple">多选题</option></select><select id="bankStatus" aria-label="选择学习状态"><option value="all">全部状态</option><option value="new">未做新题</option><option value="wrong">做错过</option><option value="review">待巩固</option><option value="starred">已收藏</option></select></div>
+        <div class="bank-list" id="bankList"></div><div class="bank-pagination" id="bankPagination"></div>
+      </section>
+
+      <section id="syncView" class="view" hidden aria-labelledby="syncTitle">
+        <div class="simple-heading"><div><div class="eyebrow">MULTI-DEVICE</div><h1 id="syncTitle">多设备同步</h1><p>在 Mac 和 iPhone 上填同一个同步码，答题进度就会自动互通。</p></div><span id="syncAppUrl"></span></div>
+        <div class="sync-grid">
+          <div class="sync-card">
+            <h2>同步码</h2>
+            <p>自己定一串字母或数字（4-32 位），所有设备填一样的就行。请把它当成密码，不要发给别人。</p>
+            <div class="sync-row">
+              <input type="text" id="syncCode" placeholder="例如 TRAIN2026" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="同步码">
+              <button type="button" class="btn btn-outline-dark" id="syncGenerate">随机生成</button>
+            </div>
+          </div>
+          <div class="sync-card">
+            <h2>同步服务地址</h2>
+            <p>部署完成后这里会自动填好。如果换了自己的域名，把地址改成 <code>https://你的域名/api/state</code>。</p>
+            <input type="text" id="syncEndpoint" placeholder="https://xxx.workers.dev/api/state" autocomplete="off" spellcheck="false" aria-label="同步服务地址">
+          </div>
+        </div>
+        <div class="sync-actions"><button type="button" class="btn btn-dark" id="syncSave">保存并同步</button><button type="button" class="btn btn-outline-dark" id="syncNow">立即同步</button><span class="sync-status" id="syncStatus"></span></div>
+        <div class="backup-note"><strong>同步规则</strong><p>答完一题后几秒内会自动上传；两台设备同时做题也不会互相覆盖——每道题按最近一次作答合并，收藏按最近一次收藏合并。想立即拉取另一台设备的进度，点「立即同步」即可。</p></div>
+      </section>
+
+      <section id="backupView" class="view" hidden aria-labelledby="backupTitle">
+        <div class="simple-heading"><div><div class="eyebrow">YOUR DATA</div><h1 id="backupTitle">数据备份</h1><p>答题记录保存在当前浏览器。除了云同步，也建议定期导出备份文件。</p></div></div>
+        <div class="backup-grid"><div class="backup-card"><div class="backup-icon">⇩</div><h2>导出进度</h2><p>将新题进度、错题、收藏和作答次数保存为一个 JSON 文件。</p><button type="button" class="btn btn-dark" id="exportBackup">导出备份</button></div><div class="backup-card"><div class="backup-icon">⇧</div><h2>恢复进度</h2><p>在换浏览器或清除浏览器数据后，选择之前导出的文件恢复记录。</p><label class="btn btn-outline-dark file-button">选择备份文件<input type="file" id="importBackup" accept=".json,application/json"></label></div></div>
+        <div class="backup-note"><strong>关于保存位置</strong><p>每个浏览器都会把进度存在自己这台设备上。想让手机和电脑互通，请到「多设备同步」里填同一个同步码。</p></div>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="questions.js"></script>
+  <script src="core.js"></script>
+  <script src="sync.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

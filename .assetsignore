@@ -1,0 +1,11 @@
+# 这些文件只用于本地开发和部署，不需要当成网站资源上传。
+worker
+wrangler.toml
+wrangler.jsonc
+dev-server.js
+node_modules
+.wrangler
+.sync-data.json
+.git
+.gitignore
+*.md
